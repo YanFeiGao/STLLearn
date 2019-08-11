@@ -1,0 +1,4 @@
+﻿  pch.cpp
+  STL_Thread.cpp
+i:\cppstl\stllearn\stl_thread\stl_thread.cpp(987): warning C4172: 返回局部变量或临时变量的地址
+  STL_Thread.vcxproj -> I:\CppSTL\STLLearn\x64\Debug\STL_Thread.exe

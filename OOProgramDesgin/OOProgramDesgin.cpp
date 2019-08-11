@@ -4,6 +4,7 @@
 #include "pch.h"
 #include <iostream>
 #include <string>
+#include <list>
 using namespace std;
 
 namespace Complex_Test
@@ -191,12 +192,45 @@ namespace OOP_Test
 		}
 	};
 }
+namespace Smart_Test
+{
+	void part1()
+	{
+		//STL中存在两种智能指针，shared_ptr unique_ptr
+		//weak_ptr是一种弱引用来指向shared_ptr所管理的对象
+		shared_ptr<string> p1;
+		shared_ptr<list<int>> p2;
+		if (p1&&p1->empty())
+		{
+			*p1 = "hi";
+		}
+		string* pstr = p1.get();
+		bool us = p1.unique();
+		long count = p1.use_count();
+
+		shared_ptr<double > p3 = make_shared<double>(42.0);
+		double* dvalue = p3.get();
+		us = p1.unique();
+		count = p3.use_count();
+
+		auto p4 = make_shared<list<int>>();
+		auto p5(p3);
+		count = p5.use_count();
+
+	}
+	void Smart_Test_main()
+	{
+		part1();
+		return;
+	}
+}
 int main()
 {
 	Complex_Test::Complex_Test_main();
 	String_Test::String_Test_main();
 	OOP_Test::OOP_Test_main();
 	OOP_Test::conversion_fun();
+	Smart_Test::Smart_Test_main();
 	return 0;
 }
 

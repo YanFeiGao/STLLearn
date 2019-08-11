@@ -1,0 +1,6 @@
+﻿  pch.cpp
+  1SixPartUse.cpp
+i:\cppstl\stllearn\1sixpartuse\1sixpartuse.cpp(225): warning C4293: “<<”: Shift 计数为负或过大，其行为未定义
+i:\cppstl\stllearn\1sixpartuse\1sixpartuse.cpp(240): warning C4474: printf: 格式字符串中传递的参数太多
+  i:\cppstl\stllearn\1sixpartuse\1sixpartuse.cpp(240): note: 占位符和其参数预计 1 可变参数，但提供的却是 2 参数
+  1SixPartUse.vcxproj -> I:\CppSTL\STLLearn\x64\Debug\1SixPartUse.exe
