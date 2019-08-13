@@ -5,6 +5,9 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include <vector>
+#include <new>
+#include <cassert>
 using namespace std;
 
 namespace Complex_Test
@@ -19,6 +22,7 @@ namespace Complex_Test
 
 	int Complex_Test_main()
 	{
+		std::cout << "**************************start Complex_Test_main**************************\n";
 		complex c1(2, 1);
 		complex c2(4, 0);
 
@@ -67,7 +71,9 @@ namespace Complex_Test
 		delete mem;
 		//析构的时候，先析构函数再释放内存
 		//00：24：50 高能开始  8 堆栈内存管理
+		std::cout << "**************************end Complex_Test_main**************************\n";
 		return 0;
+		
 	}
 }
 namespace String_Test
@@ -75,6 +81,7 @@ namespace String_Test
 #include "String.h"
 	void String_Test_main()
 	{
+		std::cout << "**************************start String_Test_main**************************\n";
 		(String)0;
 		String s1("hello");
 		String s2("world");
@@ -87,6 +94,7 @@ namespace String_Test
 		cout << s3 << endl;
 		cout << s2 << endl;
 		cout << s1 << endl;
+		std::cout << "**************************end String_Test_main**************************\n";
 	}
 }
 namespace OOP_Test
@@ -96,6 +104,7 @@ namespace OOP_Test
 	
 	void OOP_Test_main()
 	{
+		std::cout << "**************************start OOP_Test_main**************************\n";
 		//调用static函数的两种方法，1 通过obj调用 2 通过class name调用
 		Account::set_rate(5.0);//单件模式，就是这样访问的
 		Account a;
@@ -104,6 +113,7 @@ namespace OOP_Test
 		//先执行B的默认构造函数，再执行自己的。A的析构函数会先执行自己的
 		//再调用B的析构函数
 		//继承关系也是一样的
+		std::cout << "**************************end OOP_Test_main**************************\n";
 
 	}
 	class Fraction
@@ -171,6 +181,7 @@ namespace OOP_Test
 	};
 	void conversion_fun()
 	{
+		std::cout << "**************************start conversion_fun**************************\n";
 		Fraction f(3, 5);
 		double sum = 4 + f;
 		cout << "sum(4 + f) = " << sum << endl;
@@ -180,6 +191,7 @@ namespace OOP_Test
 		string str = f;
 		cout << "Result is: " << str << endl; //Result is: 3/5
 		//cout << "Result is: "<< endl; //Result is: 3/5
+		std::cout << "**************************end conversion_fun**************************\n";
 	}
 	//智能指针 pointer——like classes
 	//仿函数 function——like calsses
@@ -194,8 +206,9 @@ namespace OOP_Test
 }
 namespace Smart_Test
 {
-	void part1()
+	void shared_ptr_Test()
 	{
+		std::cout << "**************************start shared_ptr_Test**************************\n";
 		//STL中存在两种智能指针，shared_ptr unique_ptr
 		//weak_ptr是一种弱引用来指向shared_ptr所管理的对象
 		shared_ptr<string> p1;
@@ -204,24 +217,166 @@ namespace Smart_Test
 		{
 			*p1 = "hi";
 		}
-		string* pstr = p1.get();
-		bool us = p1.unique();
-		long count = p1.use_count();
+		string* pstr = p1.get();//get用于获取智能指针管理的指针
+		bool us = p1.unique();//判断是否是共享指针
+		long count = p1.use_count();//获取引用计数
 
+		shared_ptr<double>  pdouble(new double(12.0));//显示使用double* 来创建智能指针
 		shared_ptr<double > p3 = make_shared<double>(42.0);
 		double* dvalue = p3.get();
 		us = p1.unique();
 		count = p3.use_count();
 
+		p3.reset(new double(11.0));
+
 		auto p4 = make_shared<list<int>>();
 		auto p5(p3);
 		count = p5.use_count();
 
+		int *pint1 = new int;//如果分配失败，new返回一个std::bad_alloc
+		int *pint2 = new (nothrow) int;//如果分配失败，new返回一个空指针 palcement new
+
+		const int *pci = new const int(1024);
+		delete pci;
+		std::cout << "**************************end shared_ptr_Test**************************\n";
+
+	}
+	struct Foo {
+		Foo() { std::cout << "Foo\n"; }
+		~Foo() { std::cout << "~Foo\n"; }
+	};
+	struct D
+	{
+		void bar() { std::cout << "Call deleter D::bar()...\n"; }
+		void operator()(Foo* p) const
+		{
+			std::cout << "Call delete for Foo object...\n";
+			delete p;
+		}
+	};
+	void unique_ptr_Test()
+	{
+		std::cout << "**************************start unique_ptr_Test**************************\n";
+		unique_ptr<double> p1;
+		unique_ptr<int> p2(new int(42));
+		unique_ptr<string>str1(new string("char"));
+		//unique_ptr<string> str2(str1);//不支持拷贝
+		unique_ptr<string> str3;
+		//str3 = str1;//不支持赋值
+
+		unique_ptr<int[]> up0(new int[1000000]);
+		int* pint = up0.release();//并没有按照书中所说的，自动清理掉内存
+
+		delete[]pint;
+
+		std::cout << "Creating new Foo...\n";
+		std::unique_ptr<Foo> up(new Foo());
+
+		std::cout << "About to release Foo...\n";
+		Foo* fp = up.release();
+
+		assert(up.get() == nullptr);
+		std::cout << "Foo is no longer owned by unique_ptr...\n";
+
+		delete fp;
+
+		std::unique_ptr<Foo, D> up1(new Foo(), D());
+		D& del = up1.get_deleter();
+		del.bar();
+
+		std::cout << "Creating new Foo...\n";
+		std::unique_ptr<Foo, D> up2(new Foo(), D());  // up 占有 Foo 指针（删除器 D ）
+
+		std::cout << "Replace owned Foo with a new Foo...\n";
+		up2.reset(new Foo());  // 调用旧者的删除器
+
+		std::cout << "Release and delete the owned Foo...\n";
+		up2.reset(nullptr);
+		std::cout << "**************************end unique_ptr_Test**************************\n";
+
+	}
+
+	void observe(std::weak_ptr<int> weak)
+	{
+		if (auto observe = weak.lock()) {
+			std::cout << "\tobserve() able to lock weak_ptr<>, value=" << *observe << "\n";
+		}
+		else {
+			std::cout << "\tobserve() unable to lock weak_ptr<>\n";
+		}
+	}
+	void weak_ptr_Test()
+	{
+		std::cout << "**************************start weak_ptr_Test**************************\n";
+		auto p = make_shared<int>(42);
+		weak_ptr<int> wp(p);//弱引用，所以引用计数不会增长
+		if (shared_ptr<int> np = wp.lock())//如果np不为空则条件成立
+		{
+			//在if中np与p共享对象
+		}
+
+		std::weak_ptr<int> weak;
+		std::cout << "weak_ptr<> not yet initialized\n";
+		observe(weak);
+		{
+			auto shared = std::make_shared<int>(42);
+			weak = shared;
+			std::cout << "weak_ptr<> initialized with shared_ptr.\n";
+			observe(weak);
+		}
+
+		std::cout << "shared_ptr<> has been destructed due to scope exit.\n";
+		observe(weak);
+		std::cout << "**************************end weak_ptr_Test**************************\n";
+		
 	}
 	void Smart_Test_main()
 	{
-		part1();
+		shared_ptr_Test();
+		unique_ptr_Test();
+		weak_ptr_Test();
 		return;
+	}
+}
+namespace Allocator_Test
+{
+	struct Foo {
+		Foo():a(-1) { std::cout << "Foo\n"; }
+		Foo(int b ) :a(b) { std::cout << "Foo\n"; }
+		~Foo() { std::cout << "~Foo\n"; }
+		int a;
+	};
+	void allocator_Test()
+	{
+		std::cout << "**************************start allocator_Test**************************\n";
+		int n = 10;
+		allocator<Foo> allocFoo;//可以分配FOO的allocator对象
+		auto const p = allocFoo.allocate(n);//分配n个未初始化的FOO
+		auto q = p;
+		int value = 100;
+		for (int i =0;i<n;i++)
+		{
+			allocFoo.construct(q, value);
+			q ++ ;
+		}
+	
+		while (p!=q)
+		{
+			allocFoo.destroy(q--);//并没有释放内存，只是调用了析构函数
+		}
+		
+		allocFoo.deallocate(p,n);
+		n = 0;
+
+		std::vector<int> vec{ 0,1,2,3,4,5,6,7,8,9 };
+		allocator<int> allocInt;
+		//分配比vec中元素多两倍的元素空间
+		auto pInt = allocInt.allocate(vec.size() * 2);
+		//通过拷贝vec中的元素来构造从pInt开始的元素
+		auto qInt = uninitialized_copy(vec.begin(), vec.end(), pInt);
+		//将剩余元素初始化为42
+		uninitialized_fill_n(qInt, vec.size(), 42);
+		std::cout << "**************************end allocator_Test**************************\n";
 	}
 }
 int main()
@@ -231,6 +386,7 @@ int main()
 	OOP_Test::OOP_Test_main();
 	OOP_Test::conversion_fun();
 	Smart_Test::Smart_Test_main();
+	Allocator_Test::allocator_Test();
 	return 0;
 }
 
