@@ -379,14 +379,52 @@ namespace Allocator_Test
 		std::cout << "**************************end allocator_Test**************************\n";
 	}
 }
+namespace Generic_algorithm_Test
+{
+	void generic_algorithm_Test()
+	{
+		std::cout << "**************************start Generic_algorithm_Test**************************\n";
+		vector<int> vec;
+		std::cout << "vector容器大小：" << vec.size() << endl;
+		auto vecit = back_inserter(vec);
+		*vecit = 42;//赋值后容器扩张
+		std::cout << "back_inserter后vector容器大小：" << vec.size() << endl;
+		fill_n(back_inserter(vec), 10, 0);
+
+		int arr1[] = {0,1,2,3,4,5,6,7,8,9};
+		cout << "sizeof(arr1) Value " << sizeof(arr1) << endl;
+		cout << "sizeof(*arr1) value " << sizeof(*arr1) << endl;
+		int arr2[sizeof(arr1)/sizeof(*arr1)];
+		auto ret = copy(begin(arr1), end(arr1), arr2);
+
+		size_t v1 = 42;
+		size_t v2 = 2;
+		auto f1 = [v1] {return v1; };//显示捕获
+		auto f2 = [&v1] {return v1; };
+		auto f3 = [=] {return v1; };//隐式捕获
+		auto f4 = [&] {return v1; };
+		auto f5 = [&,v2] {return v1; };
+		v1 = 0;
+		auto i = f1();
+		auto j = f2();
+		auto k = f3();
+		auto o = f4();
+		//捕获列表 参数列表 -> 修饰符 返回值  函数体
+		auto f6 = [v1](int a) mutable -> size_t {return a+++v1; };//可变 lambda
+		std::cout << "**************************end Generic_algorithm_Test**************************\n";
+	}
+}
 int main()
 {
+	std::cout << "**************************start allocator_Test**************************\n";
+	std::cout << "**************************end allocator_Test**************************\n";
 	Complex_Test::Complex_Test_main();
 	String_Test::String_Test_main();
 	OOP_Test::OOP_Test_main();
 	OOP_Test::conversion_fun();
 	Smart_Test::Smart_Test_main();
 	Allocator_Test::allocator_Test();
+	Generic_algorithm_Test::generic_algorithm_Test();
 	return 0;
 }
 
