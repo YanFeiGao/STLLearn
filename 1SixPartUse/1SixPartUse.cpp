@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <list>
 using namespace std;
 namespace cppClassTest
 {
@@ -177,7 +178,7 @@ namespace cppClassTest
 		return ;
 	}
 }
-namespace cppPointTest
+namespace cppPointerTest
 {
 	char* p0(char a[10]) //返回值为指针的函数
 	{
@@ -211,8 +212,8 @@ namespace cppExpressionTest
 {
 	void ptr()
 	{
-		for (int i = 5; i < 8; i++) printf("%c", '*');
-		printf("\t");
+for (int i = 5; i < 8; i++) printf("%c", '*');
+printf("\t");
 	}
 	void tests()
 	{
@@ -244,7 +245,7 @@ namespace cppExpressionTest
 		//char *ca3[3] = { "A","BB","CCC" };
 
 		int a = 1; int b = 2; int c = 2; int t;
-		while (a < b &&b< c)
+		while (a < b &&b < c)
 		{
 			t = a; a = b; b = t; c--;
 		}
@@ -256,9 +257,9 @@ namespace cppExpressionTest
 		printf("%d,%d,%d\n", a, b, c);
 		int arrInt[3][4] = { 0,1,2,3,4,5,6,7,8,9,10,11 };
 		int table[3][2] = { {1}, {3,4}, {5} };
-		int (*aaa)[4] =arrInt;//数组指针
-		int *p0 = arrInt[1]+1;
-		int *p1  =*(arrInt + 1);
+		int(*aaa)[4] = arrInt;//数组指针
+		int *p0 = arrInt[1] + 1;
+		int *p1 = *(arrInt + 1);
 		int *p2 = (*(arrInt + 1) + 1);
 
 		if (a)//if语句，非零就会进入
@@ -266,23 +267,147 @@ namespace cppExpressionTest
 			int aa = -2;
 		}
 		printf("%d\n", a = 0);//返回值为0
-		while (a =0)
+		while (a = 0)
 		{
 			a++;
 		}
 		return;
 	}
 }
+namespace cppTemplateTest
+{
+	// general version
+	template<class T>
+	class Compare
+	{
+	public:
+		static bool IsEqual(const T& lh, const T& rh)
+		{
+			return lh == rh;
+		}
+	};
+	// specialize for float
+	template<>
+	class Compare<float>
+	{
+	public:
+		static bool IsEqual(const float& lh, const float& rh)
+		{
+			return abs(lh - rh) < 10e-3;
+		}
+	};
 
+	// specialize for double
+	template<>
+	class Compare<double>
+	{
+	public:
+		static bool IsEqual(const double& lh, const double& rh)
+		{
+			return abs(lh - rh) < 10e-6;
+		}
+	};
+
+
+	//类模板
+	template<typename T, typename Q>
+	class ClassTemplate
+	{
+	public:
+		ClassTemplate(T r = 0,Q t = 0) :i(r),j(t)
+		{
+		};
+		~ClassTemplate()
+		{};
+		ClassTemplate& operator += (const ClassTemplate&)
+		{
+		};
+		size_t operator() (T)const { return T; };
+		
+	private:
+		T i;
+		Q j;
+	};
+	//特化
+	template<> class ClassTemplate<char,char>
+	{
+	public:
+		ClassTemplate& operator += (const ClassTemplate&)
+		{
+		};
+	};
+	//偏特化 “个数上的偏”
+	template< typename Q> class ClassTemplate<char, typename Q>
+	{
+	public:
+		ClassTemplate& operator += (const ClassTemplate&)
+		{
+		};
+	};
+	//偏特化 “范围上的偏”
+	template<typename T, typename Q>
+	class ClassTemplate<T*,Q*>
+	{
+	};
+
+	//函数模板
+	template<typename T> inline const T& min(const T& a, const T& b)
+	{
+		return a < b ? a : b;
+	}
+
+	//成员模板
+	template<typename T>
+	class MemberTemplate
+	{
+	public:
+		MemberTemplate(T r = 0) :i(r)
+		{
+		};
+		~MemberTemplate()
+		{};
+		MemberTemplate& operator += (const MemberTemplate&)
+		{
+		};
+		template<typename U>
+		MemberTemplate(const MemberTemplate<U>& p):i(p.i)
+		{
+		}
+	private:
+		T i;
+	};
+
+	//模板模板参数
+	template<typename T,
+			template<typename T> class container
+	>
+	class Xscl
+	{
+	private:
+		container<T> c;
+	};
+	template<typename T>
+	using	Lst = list<T, allocator<T>>;//其实容器是需要分配器的
+
+	void templateTest()
+	{
+		ClassTemplate<int,int> c1(1,2);
+		const int a = min(int(1), int(2));
+		MemberTemplate<int> c2 = MemberTemplate<int>(1);
+
+		//Xscl<string, list> myLst1;//存在错误
+		Xscl<string, Lst> myLst2;
+	}
+}
 
 int main()
 {
-    //std::cout << "Hello World!\n"; 
 	cppExpressionTest::tests();
 	cppClassTest::testPolymorphism();
-	cppPointTest::testexp();
+	cppPointerTest::testexp();
 	cppClassTest::TestCopyConstructor();
 	cppClassTest::testStruct();
+	cppTemplateTest::templateTest();
 	return 0;
 }
 
