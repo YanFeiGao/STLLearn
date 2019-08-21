@@ -143,6 +143,35 @@ namespace cppClassTest
 	  100,
 	  "JiNan"
 		};
+
+		size_t size = sizeof(student2);
+		size = sizeof(Student1);
+		vector<Student1> vec;
+		cout << "empty vector size: " << sizeof(vec) << endl;
+		vec.push_back(student7);
+		cout << "push 1 vector size: " << sizeof(vec) << endl;
+		vec.push_back(student7);
+		cout << "push 2 vector size: " << sizeof(vec) << endl;
+		vec.push_back(student7);
+		vec.push_back(student7);
+		cout << "push 4 vector size: " << sizeof(vec) << endl;
+		vec.push_back(student7);
+		vec.push_back(student7);
+		vec.push_back(student7);
+		vec.push_back(student7);
+		cout << "push 8 vector size: " << sizeof(vec) << endl;
+		vec.push_back(student7);
+		vec.push_back(student7);
+		vec.push_back(student7);
+		vec.push_back(student7);
+		vec.push_back(student7);
+		vec.push_back(student7);
+		vec.push_back(student7);
+		vec.push_back(student7);
+		cout << "push 16 vector size: " << sizeof(vec) << endl;
+		cout << "only calculate vector contain solid part, not elements"<< endl;
+		vector<Student1>::size_type vecsize = vec.size();
+		size = sizeof(student2);
 		return 1;
 	}
 
@@ -186,7 +215,7 @@ namespace cppPointerTest
 		return r; 
 	}
 	char(*p1)(char a[10]);//函数指针
-	int testexp()
+	int testpointer()
 	{
 		//#todo 函数指针  返回值为指针的函数
 		int(*ng)[10];//数组指针
@@ -212,10 +241,10 @@ namespace cppExpressionTest
 {
 	void ptr()
 	{
-for (int i = 5; i < 8; i++) printf("%c", '*');
-printf("\t");
+		for (int i = 5; i < 8; i++) printf("%c", '*');
+		printf("\t");
 	}
-	void tests()
+	void unFormatTest()
 	{
 
 		char stra[7] = "string";
@@ -271,7 +300,123 @@ printf("\t");
 		{
 			a++;
 		}
+
+		//cout << a < 60 ? "pass" : "fail";
+		// <<返回值为basic_ostream
+		//无法编译，等价于(cout << a) < 60 ? "pass" : "fail";
+		cout << (a < 60) ? "pass" : "fail";//error
+		cout << ((a < 60) ? "pass" : "fail");//success
 		return;
+	}
+	void PrimeTest()
+	{
+		//1. cast 
+		//1.1 static_cast
+		int i = 1, j = 2;
+		int itemp = i / j;// output 0 
+		double dtemp = i / j;// output 0.0
+		//static_cast等于告诉编译器不需要在意精度的损失，所以说这在一定程度上。可以关闭一些因为精度丢失所产生的警告
+		//只要不包含底层const，都可以使用static_cast
+		double static_cast_value = static_cast<double>(i) / j;// output 0.500
+		void* pVoid = &dtemp;
+		double* pdtemp = static_cast<double*>(pVoid);
+		//1.1const_cast
+		const char* pCon_char = "Test const char";
+		//语法上是正确的，但是通过char*指针来写值会产生未定义的结果
+		char* pchar0 = const_cast<char*>(pCon_char);
+		//1.2 
+		*pdtemp = 12;
+		char* pcharValue = reinterpret_cast<char*>(pdtemp);
+		string str(pcharValue);
+
+		//2.优先级与结合律
+		// C++ Operator Precedence and Associativity
+		// The highest precedence level is at the top of the table.
+		//+------------------+-----------------------------------------+---------------+
+		//| Operator         | Name or Meaning                         | Associativity |
+		//+------------------+-----------------------------------------+---------------+
+		//| ::               | Scope resolution                        | None          |
+		//| ::               | Global                                  | None          |
+		//| [ ]              | Array subscript                         | Left to right |
+		//| ( )              | Function call                           | Left to right |
+		//| ( )              | Conversion                              | None          |
+		//| .                | Member selection (object)               | Left to right |
+		//| ->               | Member selection (pointer)              | Left to right |
+		//| ++               | Postfix increment                       | None          |
+		//| --               | Postfix decrement                       | None          |
+		//| new              | Allocate object                         | None          |
+		//| delete           | Deallocate object                       | None          |
+		//| delete[ ]        | Deallocate object                       | None          |
+		//| ++               | Prefix increment                        | None          |
+		//| --               | Prefix decrement                        | None          |
+		//| *                | Dereference                             | None          |
+		//| &                | Address-of                              | None          |
+		//| +                | Unary plus                              | None          |
+		//| -                | Arithmetic negation (unary)             | None          |
+		//| !                | Logical NOT                             | None          |
+		//| ~                | Bitwise complement                      | None          |
+		//| sizeof           | Size of object                          | None          |
+		//| sizeof ( )       | Size of type                            | None          |
+		//| typeid( )        | type name                               | None          |
+		//| (type)           | Type cast (conversion)                  | Right to left |
+		//| const_cast       | Type cast (conversion)                  | None          |
+		//| dynamic_cast     | Type cast (conversion)                  | None          |
+		//| reinterpret_cast | Type cast (conversion)                  | None          |
+		//| static_cast      | Type cast (conversion)                  | None          |
+		//| .*               | Apply pointer to class member (objects) | Left to right |
+		//| ->*              | Dereference pointer to class member     | Left to right |
+		//| *                | Multiplication                          | Left to right |
+		//| /                | Division                                | Left to right |
+		//| %                | Remainder (modulus)                     | Left to right |
+		//| +                | Addition                                | Left to right |
+		//| -                | Subtraction                             | Left to right |
+		//| <<               | Left shift                              | Left to right |
+		//| >>               | Right shift                             | Left to right |
+		//| <                | Less than                               | Left to right |
+		//| >                | Greater than                            | Left to right |
+		//| <=               | Less than or equal to                   | Left to right |
+		//| >=               | Greater than or equal to                | Left to right |
+		//| ==               | Equality                                | Left to right |
+		//| !=               | Inequality                              | Left to right |
+		//| &                | Bitwise AND                             | Left to right |
+		//| ^                | Bitwise exclusive OR                    | Left to right |
+		//| |                | Bitwise OR                              | Left to right |
+		//| &&               | Logical AND                             | Left to right |
+		//| ||               | Logical OR                              | Left to right |
+		//| e1?e2:e3         | Conditional                             | Right to left |
+		//| =                | Assignment                              | Right to left |
+		//| *=               | Multiplication assignment               | Right to left |
+		//| /=               | Division assignment                     | Right to left |
+		//| %=               | Modulus assignment                      | Right to left |
+		//| +=               | Addition assignment                     | Right to left |
+		//| -=               | Subtraction assignment                  | Right to left |
+		//| <<=              | Left-shift assignment                   | Right to left |
+		//| >>=              | Right-shift assignment                  | Right to left |
+		//| &=               | Bitwise AND assignment                  | Right to left |
+		//| |=               | Bitwise inclusive OR assignment         | Right to left |
+		//| ^=               | Bitwise exclusive OR assignment         | Right to left |
+		//| ,                | Comma                                   | Left to right |
+		//+------------------+-----------------------------------------+---------------+
+		//*(解引用)运算符优先级优于+(加号)运算符
+		int a[3][3] = { 1,3,5,7,9,11,13,15,17 };
+		cout << "a[2]+1:" << a[2] + 1 << endl;//生成a[2][1]的地址，二维数组中a[2]代表一个一维数组的首地址
+		cout << "*a[2]+1:" << *a[2] + 1 << endl;//先对a[2][0]取值，再加1
+		cout << "*(a[2]+1):" << *(a[2] + 1) << endl;//生成a[2][1]的地址，再取值
+		cout << "(*a[2])+1:" << (*a[2]) + 1 << endl;//先对a[2][0]取值，再加1
+
+		//*(解引用)运算符优先级与+(一元正号)运算符相同，皆为右结合律
+		cout << "+*a[2]：" << +*a[2] << endl;
+
+
+		//*(解引用)运算符的优先级低于后置递增运算符(++),但是结果为1
+		//这是一个坑点，因为后置++返回的是原对象的副本，并不会将其递增的结果返回
+		int c[3] = { 1,3,5 };
+		vector<int> b(c, c + 3);
+		auto p = b.begin();
+		cout << "*p++:" << *p++ << endl;
+
+		cin.get();
+		return 0;
 	}
 }
 namespace cppTemplateTest
@@ -402,11 +547,15 @@ namespace cppTemplateTest
 
 int main()
 {
-	cppExpressionTest::tests();
+	cppExpressionTest::unFormatTest();
+	cppExpressionTest::PrimeTest();
+
 	cppClassTest::testPolymorphism();
-	cppPointerTest::testexp();
 	cppClassTest::TestCopyConstructor();
 	cppClassTest::testStruct();
+
+	cppPointerTest::testpointer();
+
 	cppTemplateTest::templateTest();
 	return 0;
 }
