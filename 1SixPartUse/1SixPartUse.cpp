@@ -306,6 +306,13 @@ namespace cppExpressionTest
 		//无法编译，等价于(cout << a) < 60 ? "pass" : "fail";
 		cout << (a < 60) ? "pass" : "fail";//error
 		cout << ((a < 60) ? "pass" : "fail");//success
+
+		//int &pq = fround;//定义pq就是为了用它来修改fround的值，但是实际上pq却绑定到了一个临时量上
+		// 这肯定是不希望的，所以说，语句被定义为非法
+		
+		//常量对象的地址必须由常量指针管理，常量对象的引用也必须是常量引用
+		const int temp = fround;
+		const int* pt = &a;
 		return;
 	}
 	void PrimeTest()
@@ -416,7 +423,7 @@ namespace cppExpressionTest
 		cout << "*p++:" << *p++ << endl;
 
 		cin.get();
-		return 0;
+		return;
 	}
 }
 namespace cppTemplateTest
