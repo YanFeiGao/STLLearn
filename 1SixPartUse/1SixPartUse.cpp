@@ -60,6 +60,16 @@ namespace cppClassTest
 	private:Foo() {}
 
 		   int value = 0;//类内初始化 考点
+
+		   void fun(int *i) {};//等价void fun(int *const i) {};
+		   //void fun(int *const i) {};
+		   void fun(const int *i) {};
+		   
+		   void fun(int i) {};
+		   //void fun(const int i) {};//等价于void fun(int const i) {};
+		   //void fun(int const i) {};
+		   
+		   
 	};
 
 	struct date
