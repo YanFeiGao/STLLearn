@@ -3,9 +3,48 @@
 //本工程进行数据结构的C++版本具体实现
 #include "pch.h"
 #include <iostream>
-
+using namespace std;
+namespace sort
+{
+	void InsertSort()
+	{
+		std::cout << "**************************start InsertSort**************************\n";
+		int array0[10] = {0,2,5,9,4,3,1,6,7,8};
+		for (auto i : array0)
+		{
+			std::cout <<i << ",";
+		}
+		std::cout << " " << endl;
+		int i = 0, j = 0;
+		for (i =2;i<10;++i)
+		{
+			if (array0[i] < array0[i - 1])
+			{
+				array0[0] = array0[i];
+				j = i - 1;
+				do
+				{
+					array0[j + 1] = array0[j];
+					j--;
+				} while (array0[j] > array0[0]);
+				array0[j + 1] = array0[0];
+			}
+			for (auto k : array0)
+			{
+				std::cout << k << ",";
+			}
+			std::cout << " " << endl;
+		}
+		std::cout << "**************************end InsertSort**************************\n";
+	}
+	void sortTest() 
+	{
+		InsertSort();
+	}
+}
 int main()
 {
+	sort::sortTest();
     std::cout << "Hello World!\n"; 
 }
 
