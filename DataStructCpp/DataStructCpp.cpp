@@ -3,6 +3,8 @@
 //本工程进行数据结构的C++版本具体实现
 #include "pch.h"
 #include <iostream>
+#include <vector>
+#include "math.h"
 using namespace std;
 namespace sort
 {
@@ -73,11 +75,107 @@ namespace sort
 		}
 		std::cout << "**************************end InsertSortDown**************************\n";
 	}
+	template<typename T>
+	class ShellSort {
+	public:
+		void operator() (std::vector<T> & v) const
+		{
+			// Tokuda increments
+			int f;
+			int count = 0;
+			std::vector<int> stepArray;
+			while ((f = ceil((9 * (pow(9 / 4, count++)) - 4) / 5)) <= v.size() / 2) 
+			{
+				stepArray.push_back(f);
+			}
+
+			int k = stepArray.size();
+			while (stepArray[--k] >= 1) 
+			{
+				for (int index = stepArray[k]; index < v.size(); index++) 
+				{
+					T temp = v[index];
+					int j = index - stepArray[k];
+
+					while (j >= 0 && temp < v[j]) 
+					{
+						v[j + stepArray[k]] = v[j];
+						j = j - stepArray[k];
+					}
+
+					v[j + stepArray[k]] = temp;
+				}
+				if (k == 0)
+				{
+					break;
+				}
+			}
+		}
+	};
+	void shellsSortup()
+	{
+
+		std::cout << "**************************start shellsSortup**************************\n";
+		
+		int array0[] = { 16,2,77,29, 6, 19, 15, 88 };
+		vector<int> v(array0, array0 + sizeof(array0) / sizeof(int));
+
+		int f;
+		int count = 0;
+		std::vector<int> stepArray;
+		while ((f = ceil((9 * (pow(9 / 4, count++)) - 4) / 5)) <= v.size() / 2)
+		{
+			stepArray.push_back(f);
+		}
+
+		int k = stepArray.size();
+		while (stepArray[--k] >= 1)
+		{
+			for (int index = stepArray[k]; index < v.size(); index++)
+			{
+				int temp0 = v[index];
+				int j = index - stepArray[k];
+
+				while (j >= 0 && temp0 < v[j])
+				{
+					v[j + stepArray[k]] = v[j];
+					j = j - stepArray[k];
+				}
+
+				v[j + stepArray[k]] = temp0;
+			}
+			if (k == 0)
+			{
+				break;
+			}
+		}
+
+		cout << "Sorted array is \n";
+		for (int i = 0; i < v.size(); i++) {
+			cout << v[i] << " ";
+		}
+#ifdef _DEBUG //debug版本默认预处理器 ，release版本为 NDEBUG
+		for (auto k : array0)
+		{
+			std::cout << k << ",";
+		}
+		std::cout << " " << endl;
+#endif // _DEBUG
+		std::cout << "**************************end shellsSortup**************************\n";
+	}
+	void shellsSortdown()
+	{
+		std::cout << "**************************start shellsSortdown**************************\n";
+		int R[9] = { 32,65,76,90,16,23,85,7,50 };//排序序列
+		std::cout << "**************************end shellsSortdown**************************\n";
+	}
 	void sortTest() 
 	{
 		InsertSortUp();
 		std::cout << " " << endl;
 		InsertSortDown();
+		std::cout << " " << endl;
+		shellsSortup();
 		std::cout << " " << endl;
 	}
 }
@@ -85,6 +183,8 @@ int main()
 {
 	sort::sortTest();
     std::cout << "Hello World!\n"; 
+	std::cout << "**************************start InsertSortDown**************************\n";
+	std::cout << "**************************end InsertSortDown**************************\n";
 }
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
