@@ -6,10 +6,10 @@
 using namespace std;
 namespace sort
 {
-	void InsertSort()
+	void InsertSortUp()
 	{
-		std::cout << "**************************start InsertSort**************************\n";
-		int array0[10] = {0,2,5,9,4,3,1,6,7,8};
+		std::cout << "**************************start InsertSortUp**************************\n";
+		int array0[10] = {0,9,8,7,6,5,4,3,2,1};
 		for (auto i : array0)
 		{
 			std::cout <<i << ",";
@@ -29,17 +29,56 @@ namespace sort
 				} while (array0[j] > array0[0]);
 				array0[j + 1] = array0[0];
 			}
+#ifdef _DEBUG //debug版本默认预处理器 ，release版本为 NDEBUG
 			for (auto k : array0)
 			{
 				std::cout << k << ",";
 			}
 			std::cout << " " << endl;
+#endif // _DEBUG
+			
 		}
-		std::cout << "**************************end InsertSort**************************\n";
+		std::cout << "**************************end InsertSortUp**************************\n";
+	}
+	void InsertSortDown()
+	{
+		std::cout << "**************************start InsertSortDown**************************\n";
+		int array0[10] = { 0,1,2,3,4,5,6,7,8,9 };
+		for (auto i : array0)
+		{
+			std::cout << i << ",";
+		}
+		std::cout << " " << endl;
+		int i = 0, j = 0;
+		for (i = 2; i < 10; ++i)
+		{
+			if (array0[i]>array0[i-1])//降序需要前面大后面小，这里如果前面小，就开始排序
+			{
+				array0[0] = array0[i];
+				j = i - 1;
+				do 
+				{
+					array0[j + 1] = array0[j];
+					j--;
+				} while (array0[0]>array0[j]);
+				array0[j+1] = array0[0];
+			}
+#ifdef _DEBUG //debug版本默认预处理器 ，release版本为 NDEBUG
+			for (auto k : array0)
+			{
+				std::cout << k << ",";
+			}
+			std::cout << " " << endl;
+#endif // _DEBUG
+		}
+		std::cout << "**************************end InsertSortDown**************************\n";
 	}
 	void sortTest() 
 	{
-		InsertSort();
+		InsertSortUp();
+		std::cout << " " << endl;
+		InsertSortDown();
+		std::cout << " " << endl;
 	}
 }
 int main()
