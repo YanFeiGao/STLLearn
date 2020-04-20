@@ -9,6 +9,8 @@
 #include <string>
 #include <cmath>
 #include <list>
+#include <tuple>
+#include <set>
 using namespace std;
 namespace cppClassTest
 {
@@ -561,7 +563,86 @@ namespace cppTemplateTest
 		Xscl<string, Lst> myLst2;
 	}
 }
+namespace cppLeftRightTest 
+{
+	void LeftRightTest()
+	{
+		string strtest{"I love china!"};
+		string &r1{ strtest };//可以，左值应用绑定到左值
+		//string &r2{ "I love china!" };//不可以，左值引用不能绑定到临时变量,虽然临时对象有地址	
+		const string &r3{ "I love china!" };//const引用不但可以绑定到右值，还可以执行string的隐式类型转换并将所得到的值放到string的临时变量中
+		
+		string &&r4{ "I love china!" };//临时变量被系统当做是右值
+		//string &&r5{ strtest };//右值引用不能绑定左值
+		//总结：返回左值引用的函数，连同赋值、下边解引用、前置递增递减运算符都是返回左值引用的例子。我们可以讲一个左值引用绑定
+		//返回非引用类型的函数，连同算数 关系 位 以及后置递增运算符 都生成的是右值，不能将左值引用绑定到这类表达式上
+		//但是我们可以将一个const的左值引用或者一个右值引用绑定到这类表达式上
+		int i = 100;
+		(++i) = 1099;//++i直接给i加1然后返回本身
+	}
+}
+namespace cppStlTest 
+{
+	std::tuple<double, char, std::string> get_student(int id)
+	{
+		if (id == 0) return std::make_tuple(3.8, 'A', "Lisa Simpson");
+		if (id == 1) return std::make_tuple(2.9, 'C', "Milhouse Van Houten");
+		if (id == 2) return std::make_tuple(1.7, 'D', "Ralph Wiggum");
+		throw std::invalid_argument("id");
+	}
+	struct S {
+		int n;
+		std::string s;
+		float d;
+		bool operator<(const S& rhs) const
+		{
+			// 比较 n 与 rhs.n,
+			// 然后为 s 与 rhs.s,
+			// 然后为 d 与 rhs.d
+			return std::tie(n, s, d) < std::tie(rhs.n, rhs.s, rhs.d);
+		}
+	};
 
+
+	void StlTest()
+	{
+		auto student0 = get_student(0);
+		std::cout << "ID: 0, "
+			<< "GPA: " << std::get<0>(student0) << ", "
+			<< "grade: " << std::get<1>(student0) << ", "
+			<< "name: " << std::get<2>(student0) << '\n';
+
+		double gpa1;
+		char grade1;
+		std::string name1;
+		std::tie(gpa1, grade1, name1) = get_student(1);
+		std::cout << "ID: 1, "
+			<< "GPA: " << gpa1 << ", "
+			<< "grade: " << grade1 << ", "
+			<< "name: " << name1 << '\n';
+
+		// C++17 结构化绑定：
+		/*auto[gpa2, grade2, name2] = get_student(2);
+		std::cout << "ID: 2, "
+			<< "GPA: " << gpa2 << ", "
+			<< "grade: " << grade2 << ", "
+			<< "name: " << name2 << '\n';*/
+
+		std::set<S> set_of_s; // S 为可比较小于 (LessThanComparable)
+
+		S value{ 42, "Test", 3.14 };
+		std::set<S>::iterator iter;
+		bool inserted  =false;
+
+		// 解包 insert 的返回值为 iter 与 inserted
+		std::tie(iter, inserted) = set_of_s.insert(value);
+
+		if (inserted)
+			std::cout << "Value was inserted successfully\n";
+
+
+	}
+}
 int main()
 {
 	cppExpressionTest::unFormatTest();
@@ -574,6 +655,8 @@ int main()
 	cppPointerTest::testpointer();
 
 	cppTemplateTest::templateTest();
+
+	cppStlTest::StlTest();
 	return 0;
 }
 
